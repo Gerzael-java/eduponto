@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -25,6 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.eduponto.horarios.HorariosConteudo
+import br.com.eduponto.horarios.HorariosViewModel
 import br.com.eduponto.ui.components.EstadoVazio
 import br.com.eduponto.ui.components.rotulo
 import br.com.eduponto.ui.sessao.SessaoViewModel
@@ -33,7 +37,11 @@ private data class AbaProfessor(val titulo: String, val icone: ImageVector)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfessorHomeScreen(viewModel: SessaoViewModel) {
+fun ProfessorHomeScreen(
+    viewModel: SessaoViewModel,
+    horariosViewModel: HorariosViewModel,
+    onNovoHorario: () -> Unit
+) {
     val usuario by viewModel.usuario.collectAsStateWithLifecycle()
     var abaSelecionada by rememberSaveable { mutableIntStateOf(0) }
 
@@ -64,6 +72,15 @@ fun ProfessorHomeScreen(viewModel: SessaoViewModel) {
                 }
             )
         },
+        floatingActionButton = {
+            if (abaSelecionada == 0) {
+                ExtendedFloatingActionButton(
+                    text = { Text("Novo horário") },
+                    icon = { Icon(imageVector = Icons.Filled.Add, contentDescription = null) },
+                    onClick = onNovoHorario
+                )
+            }
+        },
         bottomBar = {
             NavigationBar {
                 abas.forEachIndexed { indice, aba ->
@@ -83,10 +100,7 @@ fun ProfessorHomeScreen(viewModel: SessaoViewModel) {
                 .fillMaxSize()
         ) {
             when (abaSelecionada) {
-                0 -> EstadoVazio(
-                    titulo = "Nenhum horário cadastrado",
-                    descricao = "Crie os horários das suas aulas para poder iniciar chamadas."
-                )
+                0 -> HorariosConteudo(viewModel = horariosViewModel)
                 1 -> EstadoVazio(
                     titulo = "Nenhuma chamada em andamento",
                     descricao = "Escolha um horário e inicie a chamada para gerar o QR Code."
