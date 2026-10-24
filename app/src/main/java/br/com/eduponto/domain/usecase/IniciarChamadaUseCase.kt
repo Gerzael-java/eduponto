@@ -14,10 +14,16 @@ class IniciarChamadaUseCase(private val chamadas: ChamadaRepository) {
     }
 
     suspend operator fun invoke(horario: Horario): Resultado {
-        if (chamadas.buscarAtiva(horario.professor) != null) {
-            return Resultado.Erro("Encerre a chamada em andamento antes de iniciar outra.")
-        }
         val agora = System.currentTimeMillis()
+        val emAndamento = chamadas.buscarAtiva(horario.professor)
+        if (emAndamento != null) {
+            if (emAndamento.expiraEm < agora) {
+                // A chamada anterior já venceu e ficou aberta: encerra no horário em que venceu.
+                chamadas.encerrar(emAndamento.id, emAndamento.expiraEm)
+            } else {
+                return Resultado.Erro("Encerre a chamada em andamento antes de iniciar outra.")
+            }
+        }
         val id = chamadas.criar(
             Chamada(
                 horarioId = horario.id,

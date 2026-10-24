@@ -11,8 +11,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,18 +49,17 @@ fun LeitorQrCode(
     val aoLer by rememberUpdatedState(onTextoLido)
 
     val previewView = remember { PreviewView(contexto) }
-    val executor = remember { Executors.newSingleThreadExecutor() }
-    val leitor = remember {
-        BarcodeScanning.getClient(
+    val ultima = remember { UltimaLeitura() }
+
+    DisposableEffect(ciclo) {
+        val executor = Executors.newSingleThreadExecutor()
+        val leitor = BarcodeScanning.getClient(
             BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
                 .build()
         )
-    }
-    val ultima = remember { UltimaLeitura() }
-
-    DisposableEffect(ciclo) {
         val futuroProvedor = ProcessCameraProvider.getInstance(contexto)
+
         futuroProvedor.addListener(
             {
                 try {
@@ -96,7 +95,9 @@ fun LeitorQrCode(
             },
             ContextCompat.getMainExecutor(contexto)
         )
+
         onDispose {
+            // Ordem importa: primeiro solta a câmera, depois encerra o que a analisa.
             if (futuroProvedor.isDone) {
                 try {
                     futuroProvedor.get().unbindAll()
@@ -104,11 +105,6 @@ fun LeitorQrCode(
                     Log.e(TAG, "Falha ao liberar a câmera", e)
                 }
             }
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
             executor.shutdown()
             leitor.close()
         }
