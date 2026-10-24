@@ -27,9 +27,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.eduponto.chamadas.ChamadasConteudo
+import br.com.eduponto.chamadas.ChamadasViewModel
 import br.com.eduponto.horarios.HorariosConteudo
 import br.com.eduponto.horarios.HorariosViewModel
-import br.com.eduponto.ui.components.EstadoVazio
+import br.com.eduponto.presencas.HistoricoProfessorConteudo
+import br.com.eduponto.presencas.HistoricoProfessorViewModel
 import br.com.eduponto.ui.components.rotulo
 import br.com.eduponto.ui.sessao.SessaoViewModel
 
@@ -40,7 +43,10 @@ private data class AbaProfessor(val titulo: String, val icone: ImageVector)
 fun ProfessorHomeScreen(
     viewModel: SessaoViewModel,
     horariosViewModel: HorariosViewModel,
-    onNovoHorario: () -> Unit
+    chamadasViewModel: ChamadasViewModel,
+    historicoViewModel: HistoricoProfessorViewModel,
+    onNovoHorario: () -> Unit,
+    onAbrirChamada: (Long) -> Unit
 ) {
     val usuario by viewModel.usuario.collectAsStateWithLifecycle()
     var abaSelecionada by rememberSaveable { mutableIntStateOf(0) }
@@ -101,14 +107,11 @@ fun ProfessorHomeScreen(
         ) {
             when (abaSelecionada) {
                 0 -> HorariosConteudo(viewModel = horariosViewModel)
-                1 -> EstadoVazio(
-                    titulo = "Nenhuma chamada em andamento",
-                    descricao = "Escolha um horário e inicie a chamada para gerar o QR Code."
+                1 -> ChamadasConteudo(
+                    viewModel = chamadasViewModel,
+                    onAbrirChamada = onAbrirChamada
                 )
-                else -> EstadoVazio(
-                    titulo = "Histórico vazio",
-                    descricao = "As presenças registradas nas suas chamadas aparecerão aqui."
-                )
+                else -> HistoricoProfessorConteudo(viewModel = historicoViewModel)
             }
         }
     }

@@ -1,7 +1,10 @@
 package br.com.eduponto.ui.components
 
 import java.time.DayOfWeek
+import java.time.Instant
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 val DayOfWeek.nomeCompleto: String
     get() = when (this) {
@@ -26,3 +29,13 @@ val DayOfWeek.abreviacao: String
     }
 
 fun LocalTime.formatado(): String = "%02d:%02d".format(hour, minute)
+
+private val FORMATO_DATA_HORA: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+
+/** Milissegundos desde 1970 -> "HH:mm" no fuso do aparelho. */
+fun Long.comoHora(): String =
+    Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalTime().formatado()
+
+/** Milissegundos desde 1970 -> "dd/MM/yyyy HH:mm" no fuso do aparelho. */
+fun Long.comoDataHora(): String =
+    FORMATO_DATA_HORA.format(Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()))

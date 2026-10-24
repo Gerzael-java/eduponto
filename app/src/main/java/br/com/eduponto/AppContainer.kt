@@ -2,12 +2,19 @@ package br.com.eduponto
 
 import android.content.Context
 import br.com.eduponto.data.local.AppDatabase
+import br.com.eduponto.data.repository.ChamadaRepositoryRoom
 import br.com.eduponto.data.repository.HorarioRepositoryRoom
+import br.com.eduponto.data.repository.PresencaRepositoryRoom
 import br.com.eduponto.data.repository.SessaoRepositoryEmMemoria
+import br.com.eduponto.domain.repository.ChamadaRepository
 import br.com.eduponto.domain.repository.HorarioRepository
+import br.com.eduponto.domain.repository.PresencaRepository
 import br.com.eduponto.domain.repository.SessaoRepository
 import br.com.eduponto.domain.usecase.CriarHorarioUseCase
 import br.com.eduponto.domain.usecase.EntrarUseCase
+import br.com.eduponto.domain.usecase.IniciarChamadaUseCase
+import br.com.eduponto.domain.usecase.RegistrarComprovanteUseCase
+import br.com.eduponto.domain.usecase.RegistrarPresencaAlunoUseCase
 
 /** Contêiner de dependências manual (sem Hilt). Cresce a cada etapa. */
 class AppContainer(context: Context) {
@@ -20,5 +27,15 @@ class AppContainer(context: Context) {
     val entrar: EntrarUseCase = EntrarUseCase(sessao)
 
     val horarios: HorarioRepository by lazy { HorarioRepositoryRoom(bancoDeDados.horarioDao()) }
+    val chamadas: ChamadaRepository by lazy { ChamadaRepositoryRoom(bancoDeDados.chamadaDao()) }
+    val presencas: PresencaRepository by lazy { PresencaRepositoryRoom(bancoDeDados.presencaDao()) }
+
     val criarHorario: CriarHorarioUseCase by lazy { CriarHorarioUseCase(horarios) }
+    val iniciarChamada: IniciarChamadaUseCase by lazy { IniciarChamadaUseCase(chamadas) }
+    val registrarComprovante: RegistrarComprovanteUseCase by lazy {
+        RegistrarComprovanteUseCase(chamadas, presencas)
+    }
+    val registrarPresencaAluno: RegistrarPresencaAlunoUseCase by lazy {
+        RegistrarPresencaAlunoUseCase(presencas)
+    }
 }

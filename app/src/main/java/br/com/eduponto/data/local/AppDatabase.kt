@@ -6,13 +6,15 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [HorarioEntity::class],
-    version = 1,
+    entities = [HorarioEntity::class, ChamadaEntity::class, PresencaEntity::class],
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun horarioDao(): HorarioDao
+    abstract fun chamadaDao(): ChamadaDao
+    abstract fun presencaDao(): PresencaDao
 
     companion object {
         fun criar(context: Context): AppDatabase =
@@ -20,6 +22,9 @@ abstract class AppDatabase : RoomDatabase() {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "eduponto.db"
-            ).build()
+            )
+                // Versão de testes: ao mudar o esquema, o banco é recriado (dados antigos são apagados).
+                .fallbackToDestructiveMigration(dropAllTables = true)
+                .build()
     }
 }
