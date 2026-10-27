@@ -1,0 +1,30 @@
+-- =====================================================================
+-- EduPonto — criação do PRIMEIRO administrador e das configurações iniciais
+--
+-- Rode UMA vez, no SQL Editor do painel do Supabase, depois de aplicar as migrações.
+-- Antes, crie o usuário em: Authentication > Users > Add user
+--   (informe e-mail e senha e marque "Auto Confirm User").
+--
+-- SUBSTITUA os valores entre <...> pelos seus. Este arquivo é só um modelo:
+-- NÃO coloque e-mails ou senhas reais em arquivos que vão para o GitHub.
+-- =====================================================================
+
+-- 1) dados da instituição
+insert into public.institution_settings (name)
+values ('<NOME DA INSTITUIÇÃO>');
+
+-- 2) regra de presença padrão (editável depois pelo administrador)
+insert into public.attendance_policies (name, is_default)
+values ('Padrão', true);
+
+-- 3) perfil do administrador (o usuário já existe em auth.users)
+insert into public.users (id, full_name, email, status, must_change_password)
+select id, '<NOME DO ADMINISTRADOR>', email, 'active', false
+from auth.users
+where email = '<E-MAIL DO ADMINISTRADOR>';
+
+-- 4) papel de administrador
+insert into public.user_roles (user_id, role)
+select id, 'admin'
+from auth.users
+where email = '<E-MAIL DO ADMINISTRADOR>';
