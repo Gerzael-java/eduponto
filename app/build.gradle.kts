@@ -1,8 +1,24 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
+
+// URL e chave PÚBLICA do Supabase: lidas de local.properties (que não vai para o GitHub)
+// ou de variáveis de ambiente (útil no GitHub Actions). Nunca coloque chaves secretas aqui.
+val propriedadesLocais = Properties().apply {
+    val arquivo = rootProject.file("local.properties")
+    if (arquivo.exists()) arquivo.inputStream().use { load(it) }
+}
+
+fun configuracao(chave: String, variavelDeAmbiente: String): String =
+    (propriedadesLocais.getProperty(chave) ?: System.getenv(variavelDeAmbiente) ?: "")
+        .trim()
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
 
 android {
     namespace = "br.com.eduponto"
@@ -12,8 +28,19 @@ android {
         applicationId = "br.com.eduponto"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.5.0"
+        versionCode = 3
+        versionName = "0.6.0"
+
+        buildConfigField(
+            "String",
+            "SUPABASE_URL",
+            "\"${configuracao("supabase.url", "SUPABASE_URL")}\""
+        )
+        buildConfigField(
+            "String",
+            "SUPABASE_PUBLISHABLE_KEY",
+            "\"${configuracao("supabase.publishableKey", "SUPABASE_PUBLISHABLE_KEY")}\""
+        )
     }
 
     buildTypes {
@@ -29,6 +56,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -57,4 +85,11 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.mlkit.barcode.scanning)
     implementation(libs.zxing.core)
+
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.auth)
+    implementation(libs.supabase.postgrest)
+    implementation(libs.ktor.client.android)
+
+    testImplementation(libs.junit)
 }

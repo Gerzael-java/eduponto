@@ -6,7 +6,7 @@ set -euo pipefail
 
 GRADLE_VERSION="9.4.1"
 CMDLINE_BUILD="14742923"
-ANDROID_PLATFORM="android-36"
+ANDROID_PLATFORM="android-37"
 BUILD_TOOLS="36.0.0"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -51,14 +51,24 @@ fi
 
 echo "==> Aceitando licenças do Android SDK e instalando pacotes"
 yes | "$SDKMANAGER" --licenses >/dev/null || true
-"$SDKMANAGER" "platform-tools" "platforms;${ANDROID_PLATFORM}" "build-tools;${BUILD_TOOLS}"
+"$SDKMANAGER" "platform-tools" "build-tools;${BUILD_TOOLS}"
+# Se o nome do pacote da plataforma for diferente, o AGP baixa sozinho no build.
+"$SDKMANAGER" "platforms;${ANDROID_PLATFORM}" || echo "AVISO: plataforma ${ANDROID_PLATFORM} não instalada agora; o Gradle tentará baixar no build."
 
 echo "==> local.properties"
-echo "sdk.dir=$ANDROID_HOME" > "$PROJECT_DIR/local.properties"
+touch "$PROJECT_DIR/local.properties"
+grep -v '^sdk.dir=' "$PROJECT_DIR/local.properties" > "$PROJECT_DIR/local.properties.tmp" || true
+{
+  cat "$PROJECT_DIR/local.properties.tmp"
+  echo "sdk.dir=$ANDROID_HOME"
+} > "$PROJECT_DIR/local.properties"
+rm -f "$PROJECT_DIR/local.properties.tmp"
 
 echo "==> Gradle Wrapper"
 if [ ! -f "$PROJECT_DIR/gradle/wrapper/gradle-wrapper.jar" ]; then
   TMP_WRAPPER="$(mktemp -d)"
+  # O Gradle 9 exige um settings.gradle (mesmo vazio) para rodar qualquer tarefa
+  touch "$TMP_WRAPPER/settings.gradle"
   ( cd "$TMP_WRAPPER" && "$GRADLE_BIN" wrapper --gradle-version "$GRADLE_VERSION" --no-daemon )
   mkdir -p "$PROJECT_DIR/gradle/wrapper"
   cp "$TMP_WRAPPER/gradlew" "$TMP_WRAPPER/gradlew.bat" "$PROJECT_DIR/"

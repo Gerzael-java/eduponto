@@ -11,7 +11,8 @@ backend/
 └── supabase/
     ├── migrations/                        migrações versionadas (rodar em ordem)
     │   ├── 20261026000100_core_schema.sql        tabelas, restrições e índices
-    │   └── 20261026000200_security_and_audit.sql RLS, privilégios e auditoria
+    │   ├── 20261026000200_security_and_audit.sql RLS, privilégios e auditoria
+    │   └── 20261026000300_auth_helpers.sql       apoio ao login (troca de senha)
     ├── bootstrap/
     │   └── primeiro_administrador.sql.exemplo    modelo para criar o 1º administrador
     └── verificacao/
@@ -29,6 +30,7 @@ backend/
 3. Abra **SQL Editor**, cole e execute, **nesta ordem**:
    1. `20261026000100_core_schema.sql`
    2. `20261026000200_security_and_audit.sql`
+   3. `20261026000300_auth_helpers.sql`
 4. Em **Authentication > Users > Add user**, crie o usuário do administrador
    (e-mail e senha, com "Auto Confirm User").
 5. Copie `bootstrap/primeiro_administrador.sql.exemplo`, troque os valores entre `<...>`

@@ -8,32 +8,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import br.com.eduponto.domain.model.Perfil
-import br.com.eduponto.ui.components.rotulo
+import br.com.eduponto.R
+import br.com.eduponto.ui.auth.textoRes
+import br.com.eduponto.ui.theme.Espacamento
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(viewModel: LoginViewModel) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -46,33 +47,63 @@ fun LoginScreen(viewModel: LoginViewModel) {
                 .padding(paddingInterno)
                 .imePadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .padding(horizontal = Espacamento.l, vertical = Espacamento.xl),
+            verticalArrangement = Arrangement.spacedBy(Espacamento.m)
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Espacamento.l))
 
             Text(
-                text = "EduPonto",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.displayMedium,
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = "Horários e presenças de professores e alunos.",
+                text = stringResource(R.string.login_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Espacamento.s))
 
             OutlinedTextField(
-                value = estado.nome,
-                onValueChange = viewModel::aoMudarNome,
-                label = { Text("Seu nome") },
+                value = estado.email,
+                onValueChange = viewModel::aoMudarEmail,
+                label = { Text(stringResource(R.string.login_email)) },
                 singleLine = true,
-                isError = estado.erro != null,
-                supportingText = { estado.erro?.let { Text(it) } },
+                enabled = !estado.carregando,
                 keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = estado.senha,
+                onValueChange = viewModel::aoMudarSenha,
+                label = { Text(stringResource(R.string.login_password)) },
+                singleLine = true,
+                enabled = !estado.carregando,
+                visualTransformation = if (estado.mostrarSenha) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                trailingIcon = {
+                    TextButton(onClick = viewModel::alternarSenhaVisivel) {
+                        Text(
+                            stringResource(
+                                if (estado.mostrarSenha) {
+                                    R.string.login_hide_password
+                                } else {
+                                    R.string.login_show_password
+                                }
+                            )
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
@@ -84,22 +115,12 @@ fun LoginScreen(viewModel: LoginViewModel) {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Text(
-                text = "Entrar como",
-                style = MaterialTheme.typography.labelLarge
-            )
-            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                Perfil.entries.forEachIndexed { indice, perfil ->
-                    SegmentedButton(
-                        selected = estado.perfil == perfil,
-                        onClick = { viewModel.aoMudarPerfil(perfil) },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = indice,
-                            count = Perfil.entries.size
-                        ),
-                        label = { Text(perfil.rotulo) }
-                    )
-                }
+            estado.erro?.let { erro ->
+                Text(
+                    text = stringResource(erro.textoRes()),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
             }
 
             Button(
@@ -107,23 +128,24 @@ fun LoginScreen(viewModel: LoginViewModel) {
                     foco.clearFocus()
                     viewModel.aoEntrar()
                 },
+                enabled = !estado.carregando,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Entrar")
+                if (estado.carregando) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(stringResource(R.string.login_submit))
+                }
             }
 
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Text(
-                    text = "Login de demonstração: não há senha nem verificação de identidade. " +
-                        "Os dados ficam somente neste aparelho.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
+            Text(
+                text = stringResource(R.string.login_help),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

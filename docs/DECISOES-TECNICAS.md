@@ -74,8 +74,43 @@ token_version, token_expires_at, created_at`); `select *` falha de propósito.
 Chave secreta e senha do banco nunca entram no código nem no repositório. A URL e a chave
 pública do projeto ficam em `local.properties` (ignorado pelo Git).
 
+## D14. Login real e estado de autenticação
+O login de demonstração foi removido. O app só mostra telas autenticadas depois que o servidor
+valida e-mail e senha. O estado (carregando, sem sessão, trocar senha, conta bloqueada, logado)
+vem do servidor e é tratado em um único ponto (`AuthGate`). Perfil e papéis são **lidos do
+banco**, nunca enviados pelo app. Quem tem mais de um papel abre no de maior responsabilidade
+(administrador, depois professor, depois aluno); um seletor de papel entra depois.
+
+## D15. Senha provisória e política de senha
+Contas novas nascem com `must_change_password = true`: o app obriga a trocar a senha no primeiro
+acesso. A função `mark_password_changed()` é uma trava de uso, não uma barreira de segurança. O app
+exige 8 caracteres, com letras e números; as regras do servidor valem também e devem ser
+configuradas no painel de autenticação.
+
+## D16. Sessão no aparelho
+A biblioteca guarda a sessão no armazenamento padrão do app, **sem criptografia adicional**.
+`allowBackup` está desligado, o que impede cópia de segurança dos dados. Uma versão futura deve
+guardar a sessão em armazenamento criptografado (Keystore).
+
+## D17. Configuração e segredos no app
+URL e chave pública do Supabase vêm de `local.properties` (fora do Git) ou de variáveis de ambiente
+no CI. O app recusa iniciar com uma chave que pareça secreta (`sb_secret_...` ou JWT com papel
+`service_role`).
+
+## D18. Textos e tema
+Textos novos ficam em `strings.xml`; mensagens de erro do domínio são códigos (`AuthError`)
+traduzidos na interface. O tema escuro é o padrão, com cores, formas e espaçamentos centralizados
+em `ui/theme`. As telas antigas (horários, chamadas, histórico) serão migradas aos poucos.
+
+## D19. Funcionalidades locais em transição
+Horários, chamadas e presenças ainda usam o banco local (Room) e a identificação por nome, vinda
+do login real. São provisórios e serão substituídos por versões ligadas ao servidor nas próximas
+etapas.
+
 ## Pendências conhecidas
 - Funções de servidor (RPC) para horários, chamadas, presenças e correções.
-- Função de servidor para criar usuários (Edge Function).
+- Função de servidor (Edge Function) para o administrador criar usuários.
+- Seletor de papel para quem tem mais de um.
+- Sessão em armazenamento criptografado.
 - Verificar o que o plano pago oferece de backup antes do uso real.
 - Avaliação de LGPD (alunos menores de idade) e do uso para controle de jornada.

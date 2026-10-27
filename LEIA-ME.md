@@ -31,9 +31,27 @@ de professores e alunos. **Versão de testes**: tudo fica salvo apenas no aparel
 
 ## Versões usadas
 
-JDK 17 · Gradle 9.4.1 · Android Gradle Plugin 9.2.1 · Kotlin 2.3.21 · KSP 2.3.7 ·
+Supabase (supabase-kt 3.6.0) · JDK 17 · Gradle 9.4.1 · Android Gradle Plugin 9.2.1 · Kotlin 2.3.21 · KSP 2.3.7 ·
 Compose BOM 2026.08.00 · Room 2.8.4 · CameraX 1.6.1 · ML Kit barcode-scanning 17.3.0 ·
 compileSdk 37 · targetSdk 36 · minSdk 26. Todas as versões ficam em `gradle/libs.versions.toml`.
+
+## Configurar o servidor (Supabase)
+
+O app precisa da URL e da chave **pública** do projeto Supabase. Guarde-as em `local.properties`
+(arquivo que não vai para o GitHub):
+
+```bash
+bash scripts/configurar-supabase.sh
+```
+
+Nunca use a chave secreta (`service_role` / `sb_secret_...`) no app. O banco está em `backend/`
+(ver `backend/README.md`) e as decisões de arquitetura em `docs/DECISOES-TECNICAS.md`.
+
+## Testes automatizados
+
+```bash
+./gradlew testDebugUnitTest
+```
 
 ## Gerar o APK
 

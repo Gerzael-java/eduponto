@@ -4,12 +4,44 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-// Verde-escola (quadro), âmbar (lápis) e azul-ardósia (caderno).
+// Identidade: fundo grafite, verde-claro para ações principais, verde-escuro para destaques,
+// âmbar para atenção e vermelho para erros e ações destrutivas.
+val EsquemaEscuro = darkColorScheme(
+    primary = Color(0xFF6FD4A0),
+    onPrimary = Color(0xFF00391F),
+    primaryContainer = Color(0xFF1F5A3E),
+    onPrimaryContainer = Color(0xFFB8F3D2),
+    secondary = Color(0xFFF2BE6B),
+    onSecondary = Color(0xFF462B00),
+    secondaryContainer = Color(0xFF653F00),
+    onSecondaryContainer = Color(0xFFFFDDAF),
+    tertiary = Color(0xFFA9C8F8),
+    onTertiary = Color(0xFF0A305D),
+    tertiaryContainer = Color(0xFF274776),
+    onTertiaryContainer = Color(0xFFD5E3FF),
+    background = Color(0xFF111413),
+    onBackground = Color(0xFFE2E6E3),
+    surface = Color(0xFF111413),
+    onSurface = Color(0xFFE2E6E3),
+    surfaceVariant = Color(0xFF3F4943),
+    onSurfaceVariant = Color(0xFFBFC9C3),
+    surfaceContainerLowest = Color(0xFF0C0F0E),
+    surfaceContainerLow = Color(0xFF161A18),
+    surfaceContainer = Color(0xFF1A1F1D),
+    surfaceContainerHigh = Color(0xFF242925),
+    surfaceContainerHighest = Color(0xFF2E332F),
+    outline = Color(0xFF89938D),
+    error = Color(0xFFFFB4AB),
+    onError = Color(0xFF690005),
+    errorContainer = Color(0xFF93000A),
+    onErrorContainer = Color(0xFFFFDAD6)
+)
+
 val EsquemaClaro = lightColorScheme(
-    primary = Color(0xFF2F5D50),
+    primary = Color(0xFF1F6B47),
     onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFCDE8DD),
-    onPrimaryContainer = Color(0xFF0F2B22),
+    primaryContainer = Color(0xFFB8F3D2),
+    onPrimaryContainer = Color(0xFF002111),
     secondary = Color(0xFF8A5A00),
     onSecondary = Color(0xFFFFFFFF),
     secondaryContainer = Color(0xFFFFDDAF),
@@ -29,30 +61,4 @@ val EsquemaClaro = lightColorScheme(
     onError = Color(0xFFFFFFFF),
     errorContainer = Color(0xFFFFDAD6),
     onErrorContainer = Color(0xFF410002)
-)
-
-val EsquemaEscuro = darkColorScheme(
-    primary = Color(0xFFA9D0BF),
-    onPrimary = Color(0xFF0F3A2E),
-    primaryContainer = Color(0xFF214A3D),
-    onPrimaryContainer = Color(0xFFCDE8DD),
-    secondary = Color(0xFFF2BE6B),
-    onSecondary = Color(0xFF462B00),
-    secondaryContainer = Color(0xFF653F00),
-    onSecondaryContainer = Color(0xFFFFDDAF),
-    tertiary = Color(0xFFA9C8F8),
-    onTertiary = Color(0xFF0A305D),
-    tertiaryContainer = Color(0xFF274776),
-    onTertiaryContainer = Color(0xFFD5E3FF),
-    background = Color(0xFF101412),
-    onBackground = Color(0xFFE0E3E0),
-    surface = Color(0xFF101412),
-    onSurface = Color(0xFFE0E3E0),
-    surfaceVariant = Color(0xFF404944),
-    onSurfaceVariant = Color(0xFFBFC9C3),
-    outline = Color(0xFF89938D),
-    error = Color(0xFFFFB4AB),
-    onError = Color(0xFF690005),
-    errorContainer = Color(0xFF93000A),
-    onErrorContainer = Color(0xFFFFDAD6)
 )

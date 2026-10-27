@@ -1,4 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">EduPonto</string>
+
+    <!-- comuns -->
+    <string name="common_sign_out">Sair</string>
+    <string name="common_retry">Tentar novamente</string>
+    <string name="common_loading">Carregando…</string>
+
+    <!-- login -->
+    <string name="login_subtitle">Entre com o e-mail e a senha criados pelo administrador da sua instituição.</string>
+    <string name="login_email">E-mail</string>
+    <string name="login_password">Senha</string>
+    <string name="login_show_password">Mostrar</string>
+    <string name="login_hide_password">Ocultar</string>
+    <string name="login_submit">Entrar</string>
+    <string name="login_help">Não tem acesso? Procure o administrador da instituição.</string>
+
+    <!-- troca de senha -->
+    <string name="change_title">Crie sua nova senha</string>
+    <string name="change_subtitle">Por segurança, troque a senha provisória antes de continuar.</string>
+    <string name="change_new">Nova senha</string>
+    <string name="change_confirm">Confirmar nova senha</string>
+    <string name="change_rules">Use pelo menos 8 caracteres, com letras e números.</string>
+    <string name="change_submit">Salvar nova senha</string>
+
+    <!-- conta bloqueada -->
+    <string name="blocked_title">Não foi possível abrir sua conta</string>
+    <string name="blocked_no_profile">Sua conta existe, mas ainda não foi cadastrada na instituição. Procure o administrador.</string>
+    <string name="blocked_inactive">Sua conta está desativada. Procure o administrador.</string>
+    <string name="blocked_no_role">Sua conta ainda não tem um papel (administrador, professor ou aluno). Procure o administrador.</string>
+    <string name="blocked_load_failed">Não foi possível carregar seus dados. Verifique a conexão e tente novamente.</string>
+
+    <!-- app sem configuração -->
+    <string name="not_configured_title">App não configurado</string>
+    <string name="not_configured_body">O aplicativo ainda não conhece o servidor. Defina supabase.url e supabase.publishableKey no arquivo local.properties e compile novamente.</string>
+
+    <!-- administrador -->
+    <string name="admin_in_progress_title">Área do administrador</string>
+    <string name="admin_in_progress_body">Em construção. As próximas etapas trazem o cadastro de usuários, turmas, disciplinas e matrículas.</string>
+
+    <!-- erros de autenticação -->
+    <string name="err_email_invalid">Digite um e-mail válido.</string>
+    <string name="err_password_required">Digite a senha.</string>
+    <string name="err_invalid_credentials">E-mail ou senha incorretos.</string>
+    <string name="err_no_connection">Sem conexão com a internet. Tente novamente.</string>
+    <string name="err_too_many_requests">Muitas tentativas. Aguarde alguns minutos e tente de novo.</string>
+    <string name="err_not_configured">O aplicativo ainda não foi configurado.</string>
+    <string name="err_password_short">A senha deve ter pelo menos 8 caracteres.</string>
+    <string name="err_password_letters_digits">A senha deve ter letras e números.</string>
+    <string name="err_password_mismatch">As senhas não conferem.</string>
+    <string name="err_password_rejected">O servidor recusou a nova senha. Escolha uma senha diferente da anterior e mais forte.</string>
+    <string name="err_unknown">Algo deu errado. Tente novamente.</string>
 </resources>
